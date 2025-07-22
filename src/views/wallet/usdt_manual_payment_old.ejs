@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual USDT</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+
+  <body>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      main {
+        max-width: 550px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header,
+      footer,
+      .section {
+        background: #f2f2f2;
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+
+      .qr-image {
+        width: 200px;
+        display: block;
+        margin: 10px auto;
+      }
+
+      .copy-btn,
+      .submit-btn {
+        background: linear-gradient(
+          90deg,
+          rgba(172, 10, 154, 1) 0%,
+          rgba(0, 39, 255, 1) 100%
+        );
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 9px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+      }
+      body {
+        text-align: center;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 9px;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      label {
+        font-weight: bold;
+        margin-top: 15px;
+        display: block;
+      }
+    </style>
+
+    <main>
+      <header>
+        <h2>Recharge via USDT</h2>
+      </header>
+
+      <div class="section">
+        <h3>Scan QR Code to Pay</h3>
+        <h3>Scan QR Code to Pay</h3>
+        <% if (QrImage) { %>
+        <img src="<%= QrImage %>" alt="QR Code" class="qr-image" />
+        <% } else { %>
+        <p>No QR code available.</p>
+        <% } %>
+      </div>
+
+      <div class="section">
+        <h3>Wallet Address:</h3>
+        <p id="wallet-address"><%= UsdtWalletAddress %></p>
+        <button class="copy-btn" onclick="copyToClipboard()">
+          Copy Wallet Address
+        </button>
+      </div>
+
+      <form class="section" id="usdtForm">
+        <label for="ref_no">Transaction Reference No.</label>
+        <input
+          type="text"
+          id="ref_no"
+          name="ref_no"
+          required
+          placeholder="Enter Reference Number"
+        />
+        <button class="submit-btn" type="submit">Submit</button>
+      </form>
+
+      <footer>
+        <div
+          style="
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #222;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          "
+        >
+          <h2 style="text-align: center; color: #0077cc">
+            🪙 USDT Manual Payment Instructions
+          </h2>
+
+          <ol style="padding-left: 20px">
+            <li>
+              <strong>Open</strong> your cryptocurrency wallet (e.g., Binance,
+              Trust Wallet, OKX).
+            </li>
+            <li>
+              <strong>Select</strong> the
+              <span style="color: #0077cc">Send</span> or
+              <span style="color: #0077cc">Withdraw</span> option.
+            </li>
+            <li>
+              <strong>Choose</strong> <strong>USDT (Tether)</strong> and make
+              sure the network is <strong>TRC20</strong>.
+            </li>
+            <li>
+              <strong>Send To Wallet Address:</strong><br />
+              <code
+                style="
+                  display: inline-block;
+                  background: #eee;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                  margin-top: 5px;
+                  word-break: break-word;
+                "
+                >TRC20-WALLET-ADDRESS-HERE</code
+              >
+            </li>
+            <li>
+              <strong>Enter</strong> the correct USDT amount (₹500 ≈ 6.08 USDT,
+              example).
+            </li>
+            <li>
+              <strong>Confirm</strong> and wait for the transaction to complete.
+            </li>
+            <li>
+              <strong>Copy</strong> the
+              <strong>Transaction Hash / UTR</strong> from your wallet.
+            </li>
+            <li>
+              <strong>Paste</strong> the UTR into the form and submit your
+              request.
+            </li>
+          </ol>
+
+          <p style="text-align: center; color: #cc0000; margin-top: 20px">
+            ⚠️ Please double-check the wallet address and select the correct
+            network (<strong>TRC20</strong>).<br />
+            Wrong transactions cannot be recovered!
+          </p>
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      function copyToClipboard() {
+        const address = document.getElementById("wallet-address").innerText;
+        navigator.clipboard.writeText(address);
+        alert("Wallet address copied!");
+      }
+
+      document
+        .getElementById("usdtForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const refNo = document.getElementById("ref_no").value;
+          const amount = "<%= Amount %>";
+
+          try {
+            const response = await axios.post(
+              "/wallet/paynow/manual_usdt_request",
+              {
+                money: amount,
+                utr: refNo,
+              }
+            );
+
+            if (response.data?.status) {
+              alert(response.data.message);
+              window.location.href = "/wallet/rechargerecord";
+            } else {
+              alert(response.data?.message || "Error submitting request.");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Something went wrong");
+          }
+        });
+    </script>
+  </body>
+</html>

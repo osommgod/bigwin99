@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual USDT</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+      integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+  </head>
+
+  <body>
+    <style>
+      html {
+        height: 100%;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        height: 100%;
+        max-width: 550px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #f2f2f2;
+        padding: 6px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 12px;
+        margin: 15px 10px;
+      }
+
+      footer {
+        background-color: #f2f2f2;
+        padding: 6px;
+        text-align: center;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        margin: 0px 10px;
+        margin-top: auto;
+      }
+
+      .tutorial_root {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #f2f2f2;
+        padding: 0px 25px 20px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 12px;
+        margin: 15px 10px;
+      }
+
+      .tutorial_content p {
+        display: flex;
+        gap: 6px;
+      }
+
+      .tutorial_content p strong {
+        white-space: nowrap;
+      }
+
+      @media (min-width: 500px) {
+        .tutorial_root {
+          padding: 0px 20px 20px;
+        }
+      }
+
+      .upi_display_root {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #f2f2f2;
+        padding: 0px 25px 20px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 12px;
+        margin: 15px 10px;
+      }
+
+      .upi_display_root h2 {
+        margin: 20px 0px 5px;
+        font-weight: 600;
+      }
+
+      .upi_display_content {
+        margin-top: 10px;
+        padding: 0px 13px;
+        border-radius: 9px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .upi_display_content p {
+        display: flex;
+        gap: 6px;
+      }
+
+      .upi_display_content p strong {
+        white-space: nowrap;
+      }
+
+      .upi_display_content__img {
+        width: 15px;
+        height: 15px;
+        cursor: pointer;
+        margin-left: 5px;
+      }
+      .upi_display_content__img {
+        cursor: pointer;
+      }
+
+      .verification_form__root {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        /* align-items: center; */
+        background: #f2f2f2;
+        padding: 10px 25px 25px;
+        margin-left: auto;
+        margin-right: auto;
+        border-radius: 12px;
+        margin: 15px 10px;
+      }
+
+      .verification_form__root label {
+        margin-top: 10px;
+        font-weight: 600;
+      }
+
+      .verification_form__root input {
+        margin-top: 10px;
+        padding: 10px 13px;
+        border-radius: 9px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      .verification_form__root input::placeholder {
+        font-size: 14px;
+      }
+
+      .verification_form__root button {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 9px;
+        border: 1px solid #ccc;
+        background-color: #1c4ff7;
+        background: linear-gradient(
+          90deg,
+          rgba(172, 10, 154, 1) 0%,
+          rgba(0, 39, 255, 1) 100%
+        );
+
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .upi_pay_now {
+        margin-top: 10px;
+        padding: 10px 15px;
+        border-radius: 9px;
+        border: 1px solid #ccc;
+        background-color: #1c4ff7;
+        background: linear-gradient(
+          40deg,
+          rgba(172, 10, 154, 1) 0%,
+          rgba(0, 39, 255, 1) 100%
+        );
+        font-weight: 500;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #333;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        z-index: 1000;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+      .msg {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+}
+
+.msg-content {
+  background: rgba(0, 0, 0, 0.85);
+  padding: 10px 20px;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  animation: fade-in 0.2s ease-out;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity 0.3s;
+}
+.v-enter-to {
+  opacity: 1;
+}
+.v-leave-to {
+  opacity: 0;
+}
+
+    </style>
+
+    <main>
+      <header>
+        <h2>USDT</h2>
+      </header>
+
+      <but class="upi_display_root">
+        <h2 class="upi_display_title">
+          Send <span id="display_amount"> <%=Amount%> </span> USDT on
+        </h2>
+       <% if (WalletQR) { %>
+        <img
+          src="/qr_img/<%= WalletQR %>"
+          alt="QR Code"
+          style="max-width: 220px; margin: 10px; border-radius: 10px"
+        />
+        <% } %>
+
+        <button class="upi_display_content" id="copy_wallet_address">
+          <p>
+            <strong>Wallet Address: </strong>
+            <span id="wallet_address_field"> <%= WalletAddress %> </span>
+
+            <img
+              id="copy_wallet_address"
+              class="upi_display_content__img"
+              src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTE1Ljc3IDEyMi44OCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMTE1Ljc3IDEyMi44OCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHN0eWxlIHR5cGU9InRleHQvY3NzIj4uc3Qwe2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO308L3N0eWxlPjxnPjxwYXRoIGNsYXNzPSJzdDAiIGQ9Ik04OS42MiwxMy45NnY3LjczaDEyLjE5aDAuMDF2MC4wMmMzLjg1LDAuMDEsNy4zNCwxLjU3LDkuODYsNC4xYzIuNSwyLjUxLDQuMDYsNS45OCw0LjA3LDkuODJoMC4wMnYwLjAyIHY3My4yN3YwLjAxaC0wLjAyYy0wLjAxLDMuODQtMS41Nyw3LjMzLTQuMSw5Ljg2Yy0yLjUxLDIuNS01Ljk4LDQuMDYtOS44Miw0LjA3djAuMDJoLTAuMDJoLTYxLjdINDAuMXYtMC4wMiBjLTMuODQtMC4wMS03LjM0LTEuNTctOS44Ni00LjFjLTIuNS0yLjUxLTQuMDYtNS45OC00LjA3LTkuODJoLTAuMDJ2LTAuMDJWOTIuNTFIMTMuOTZoLTAuMDF2LTAuMDJjLTMuODQtMC4wMS03LjM0LTEuNTctOS44Ni00LjEgYy0yLjUtMi41MS00LjA2LTUuOTgtNC4wNy05LjgySDB2LTAuMDJWMTMuOTZ2LTAuMDFoMC4wMmMwLjAxLTMuODUsMS41OC03LjM0LDQuMS05Ljg2YzIuNTEtMi41LDUuOTgtNC4wNiw5LjgyLTQuMDdWMGgwLjAyaDYxLjcgaDAuMDF2MC4wMmMzLjg1LDAuMDEsNy4zNCwxLjU3LDkuODYsNC4xYzIuNSwyLjUxLDQuMDYsNS45OCw0LjA3LDkuODJoMC4wMlYxMy45Nkw4OS42MiwxMy45NnogTTc5LjA0LDIxLjY5di03Ljczdi0wLjAyaDAuMDIgYzAtMC45MS0wLjM5LTEuNzUtMS4wMS0yLjM3Yy0wLjYxLTAuNjEtMS40Ni0xLTIuMzctMXYwLjAyaC0wLjAxaC02MS43aC0wLjAydi0wLjAyYy0wLjkxLDAtMS43NSwwLjM5LTIuMzcsMS4wMSBjLTAuNjEsMC42MS0xLDEuNDYtMSwyLjM3aDAuMDJ2MC4wMXY2NC41OXYwLjAyaC0wLjAyYzAsMC45MSwwLjM5LDEuNzUsMS4wMSwyLjM3YzAuNjEsMC42MSwxLjQ2LDEsMi4zNywxdi0wLjAyaDAuMDFoMTIuMTlWMzUuNjUgdi0wLjAxaDAuMDJjMC4wMS0zLjg1LDEuNTgtNy4zNCw0LjEtOS44NmMyLjUxLTIuNSw1Ljk4LTQuMDYsOS44Mi00LjA3di0wLjAyaDAuMDJINzkuMDRMNzkuMDQsMjEuNjl6IE0xMDUuMTgsMTA4LjkyVjM1LjY1di0wLjAyIGgwLjAyYzAtMC45MS0wLjM5LTEuNzUtMS4wMS0yLjM3Yy0wLjYxLTAuNjEtMS40Ni0xLTIuMzctMXYwLjAyaC0wLjAxaC02MS43aC0wLjAydi0wLjAyYy0wLjkxLDAtMS43NSwwLjM5LTIuMzcsMS4wMSBjLTAuNjEsMC42MS0xLDEuNDYtMSwyLjM3aDAuMDJ2MC4wMXY3My4yN3YwLjAyaC0wLjAyYzAsMC45MSwwLjM5LDEuNzUsMS4wMSwyLjM3YzAuNjEsMC42MSwxLjQ2LDEsMi4zNywxdi0wLjAyaDAuMDFoNjEuN2gwLjAyIHYwLjAyYzAuOTEsMCwxLjc1LTAuMzksMi4zNy0xLjAxYzAuNjEtMC42MSwxLTEuNDYsMS0yLjM3aC0wLjAyVjEwOC45MkwxMDUuMTgsMTA4LjkyeiIvPjwvZz48L3N2Zz4="
+              alt="copy upi id"
+            />
+          </p>
+        </button>
+
+        <div class="upi_pay_now">Send from your Wallet App</div>
+      </but>
+
+      <form class="verification_form__root" action="submit.php" method="post">
+        <label for="upi_ref_no">Enter TXID / Transaction Hash: </label>
+        <input
+          type="text"
+          id="ref_no"
+          name="upi_ref_no"
+          required
+          placeholder="Enter Your UTR here..."
+        />
+        <button id="submit_button" type="submit">Submit</button>
+      </form>
+
+      <div class="tutorial_root">
+        <h3 class="tutorial_title">Step by Step Process</h3>
+        <div
+          style="
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            color: #222;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          "
+        >
+          <h2 style="text-align: center; color: #0077cc">
+            🪙 USDT Manual Payment Instructions
+          </h2>
+
+          <ol style="padding-left: 20px">
+            <li>
+              <strong>Open</strong> your cryptocurrency wallet (e.g., Binance,
+              Trust Wallet, OKX).
+            </li>
+            <li>
+              <strong>Select</strong> the
+              <span style="color: #0077cc">Send</span> or
+              <span style="color: #0077cc">Withdraw</span> option.
+            </li>
+            <li>
+              <strong>Choose</strong> <strong>USDT (Tether)</strong> and make
+              sure the network is <strong>TRC20</strong>.
+            </li>
+            <li>
+              <strong>Send To Wallet Address:</strong><br />
+              <code
+                style="
+                  display: inline-block;
+                  background: #eee;
+                  padding: 6px 10px;
+                  border-radius: 6px;
+                  margin-top: 5px;
+                  word-break: break-word;
+                "
+                ><%= WalletAddress %></code
+              >
+            </li>
+            <li>
+              <strong>Enter</strong> the correct USDT amount (₹500 ≈ 6.08 USDT,
+              example).
+            </li>
+            <li>
+              <strong>Confirm</strong> and wait for the transaction to complete.
+            </li>
+            <li>
+              <strong>Copy</strong> the
+              <strong>Transaction Hash / UTR</strong> from your wallet.
+            </li>
+            <li>
+              <strong>Paste</strong> the UTR into the form and submit your
+              request.
+            </li>
+          </ol>
+
+          <p style="text-align: center; color: #cc0000; margin-top: 20px">
+            ⚠️ Please double-check the wallet address and select the correct
+            network (<strong>TRC20</strong>).<br />
+            Wrong transactions cannot be recovered!
+          </p>
+        </div>
+      </div>
+
+      <footer>
+        <p></p>
+      </footer>
+    </main>
+
+    <script>
+
+       const alertMessage = (text) => {
+            const msg = document.createElement('div');
+            msg.setAttribute('data-v-1dcba851', '');
+            msg.className = 'msg';
+
+            const msgContent = document.createElement('div');
+            msgContent.setAttribute('data-v-1dcba851', '');
+            msgContent.className = 'msg-content v-enter-active v-enter-to';
+            msgContent.style = '';
+            msgContent.textContent = text;
+
+            msg.appendChild(msgContent);
+            document.body.appendChild(msg);
+
+            setTimeout(() => {
+                msgContent.classList.remove('v-enter-active', 'v-enter-to');
+                msgContent.classList.add('v-leave-active', 'v-leave-to');
+
+                setTimeout(() => {
+                    document.body.removeChild(msg);
+                }, 100);
+            }, 1000);
+        }
+
+        const copyUpiId = document.getElementById("copy_wallet_address");
+
+        copyUpiId.addEventListener("click", function () {
+            let upi_id = document.getElementById("wallet_address_field").innerText;
+            console.log(upi_id);
+            alertMessage(`Copied to Clipboard! ID:${upi_id}`);
+            navigator.clipboard.writeText(upi_id);
+        });
+
+        const submitButton = document.getElementById("submit_button");
+        submitButton.addEventListener("click", async (event) => {
+            try {
+                event.preventDefault();
+                const refNo = document.getElementById("ref_no").value;
+                const amount = '<%=Amount%>';
+                console.log(amount)
+                const response = await axios.post("/wallet/paynow/manual_usdt_request", {
+                    money: amount,
+                    utr: refNo,
+                })
+
+                if (!response?.data) {
+                    alertMessage("Something went Wrong!")
+                    return
+                }
+
+                if (response?.data?.status === false) {
+                    alertMessage(response?.data?.message)
+                    return
+                }
+
+                alertMessage(response?.data?.message)
+
+                window.location.href = "/wallet/rechargerecord"
+            } catch (error) {
+                console.log(error);
+                alertMessage("Something went Wrong!")
+            }
+        });
+    </script>
+    </script>
+  </body>
+</html>
