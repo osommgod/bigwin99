@@ -9,6 +9,7 @@ import socketIoController from "./controllers/socketIoController";
 let cookieParser = require("cookie-parser");
 
 const app = express();
+app.set('trust proxy', true);
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
@@ -39,6 +40,6 @@ socketIoController.sendMessageAdmin(io);
 //     return res.render("404.ejs");
 // });
 
-server.listen(port, () => {
+server.listen(port, "127.0.0.1",() => {
   console.log("Connected success port: " + port);
 });
